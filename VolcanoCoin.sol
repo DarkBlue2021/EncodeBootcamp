@@ -11,11 +11,11 @@ contract VolcanoCoin{
     mapping (address => uint) balance;  // HW4, Q1
     
     event TransferOccured(uint, address);  // HW4, Q5
-    
     struct Payment{  // HW4, Q6
-        uint amout;
+        uint amount;
         address addr;
     }
+    Payment[] public payRef;
     
     mapping (uint => Payment) payReference; // HW4, Q7
     
@@ -23,6 +23,7 @@ contract VolcanoCoin{
     {
         owner = msg.sender;
         // HW4, Q3 ?? 
+        balance[owner] = totalSupply;
     }
     
     modifier onlyOwner
@@ -51,6 +52,14 @@ contract VolcanoCoin{
         
         // HW4, Q4 
         //   Called transfer to allow a user to transfer their tokens toanother address
+        balance[recipient]  = balance[owner];
+        
+        // HW4, Q7
+        Payment memory newRef;
+        newRef.amount = amount;
+        newRef.addr = recipient;
+        payRef.push(newRef);
+        
         // HW4, Q5 
         emit TransferOccured (amount, recipient);
     }
