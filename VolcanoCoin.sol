@@ -2,9 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-contract VolcanoCoin{
+ // HW5
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+//import "https://github.com/OpenZeppelin/openzeppelin-contracts/contracts/access/Ownable.sol";
+
+contract VolcanoCoin is ERC20{
     
-    uint totalSupply = 10000;
+    uint totalSupplyValue = 10000;
     address owner;
     event TotalSupplyChanged(uint);
     
@@ -19,11 +23,10 @@ contract VolcanoCoin{
     
     mapping (uint => Payment) payReference; // HW4, Q7
     
-    constructor()
-    {
+    constructor () ERC20("VolcanoCoin", "VOL")    {
         owner = msg.sender;
         // HW4, Q3 ?? 
-        balance[owner] = totalSupply;
+        balance[owner] = totalSupplyValue;
     }
     
     modifier onlyOwner
@@ -35,13 +38,13 @@ contract VolcanoCoin{
     
     function getTotalSupply() public view onlyOwner returns (uint supply)
     {
-        return totalSupply;
+        return totalSupplyValue;
     }
 
     function increaseTotalSupply() public onlyOwner()
     {
-        totalSupply = totalSupply + 1000;
-        emit TotalSupplyChanged (totalSupply);
+        totalSupplyValue = totalSupplyValue + 1000;
+        emit TotalSupplyChanged (totalSupplyValue);
     }
     
     function getBalance(address user) public view returns (uint){  // HW4, Q2
