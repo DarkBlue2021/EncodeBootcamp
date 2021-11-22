@@ -4,15 +4,16 @@ pragma solidity ^0.8.0;
 
  // HW5
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-//import "https://github.com/OpenZeppelin/openzeppelin-contracts/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract VolcanoCoin is ERC20{
+
+contract VolcanoCoin is ERC20, Ownable{
     
     uint totalSupplyValue = 10000;
-    address owner;
+    //address ownerAddr;
     event TotalSupplyChanged(uint);
     
-    mapping (address => uint) balance;  // HW4, Q1
+    //mapping (address => uint) balance;  // HW4, Q1
     
     event TransferOccured(uint, address);  // HW4, Q5
     struct Payment{  // HW4, Q6
@@ -21,20 +22,24 @@ contract VolcanoCoin is ERC20{
     }
     Payment[] public payRef;
     
-    mapping (uint => Payment) payReference; // HW4, Q7
+    mapping (uint => Payment) public payReference; // HW4, Q7
     
     constructor () ERC20("VolcanoCoin", "VOL")    {
-        owner = msg.sender;
+        _mint (msg.sender, 10000);
+        //ownerAddr = msg.sender;
         // HW4, Q3 ?? 
-        balance[owner] = totalSupplyValue;
+        //balance[ownerAddr] = totalSupplyValue;
     }
     
-    modifier onlyOwner
-    {
-        if (msg.sender == owner){
-            _;
-        }
-    }
+    //constructor() Ownable{}
+    
+    // HW5, Q7, Removed the following
+    //modifier onlyOwner
+    //{
+    //    if (msg.sender == owner){
+    //        _;
+    //    }
+    //}
     
     function getTotalSupply() public view onlyOwner returns (uint supply)
     {
@@ -47,15 +52,15 @@ contract VolcanoCoin is ERC20{
         emit TotalSupplyChanged (totalSupplyValue);
     }
     
-    function getBalance(address user) public view returns (uint){  // HW4, Q2
-        return balance[user];
-    }
+    //function getBalance(address user) public view returns (uint){  // HW4, Q2
+    //    return balance[user];
+    //}
    
     function transferToken (uint amount, address recipient) public{
         
         // HW4, Q4 
         //   Called transfer to allow a user to transfer their tokens toanother address
-        balance[recipient]  = balance[owner];
+        //balance[recipient]  = balance[ownerAddr];
         
         // HW4, Q7
         Payment memory newRef;
