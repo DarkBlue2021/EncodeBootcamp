@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract VolcanoToken is ERC721, Ownable{
     
-    uint256 tokenId;
+    uint256 mytokenId;
     
     struct VolcanoTokenStruct{
         uint timestamp;
@@ -17,32 +17,51 @@ contract VolcanoToken is ERC721, Ownable{
         string tokenURL;
     }
     
-     mapping(address => VolcanoTokenStruct[]) public tokenOwnership;
+     mapping(address => VolcanoTokenStruct) tokenOwnership;
+     address[] tokenOwnershipArray;
     
-     constructor() ERC721 ("VolcanoToken", "VLT"){}
+     constructor() ERC721 ("VolcanoToken", "VLT"){
+     }
      
-     function mintToken() public view{
-         //VolcanoTokenStruct memory newTokenData = VolcanoTokenStruct()
-         // Use block.timestamp for timestamp and any string for the tokenURI.
+     function mintToken(address receiver) public onlyOwner{
          // Store the struct to the user’s record.
          // Call: _safeMin
+        _safeMint (receiver, mytokenId);
+
+        VolcanoTokenStruct memory newTokenData;
+        newTokenData.timestamp = block.timestamp;
+        newTokenData.tokenId = mytokenId;
+        newTokenData.tokenURL = "My ID Test";
+
+        //tokenOwnership[mytokenId].push(receiver);
+        tokenOwnershipArray.push(receiver);
+        mytokenId = mytokenId + 1; 
      }
      
-     function burnToken(string memory tokenID) public view onlyOwner{
-         
-         // Call: _burn
-         // removeTokenId
+     function burnToken(uint256 tokenID) public onlyOwner{
+         _burn(tokenID);
+
+         removeTokenId(tokenID);
+         removeTokenFromMapping(tokenID);
      }
      
-     function removeTokenId(string memory tokenID) public {
+     function removeTokenId(uint256 tokenID) internal  {
+        uint256 count;
+        //uint256 tokenIDIndex;
          // Make an internal function that loops over the array of structs 
-         // and removes the burnedtokenID. Call the function inside your burn function.
+         // and removes the burnedtokenID. 
+        count = tokenOwnershipArray.length;
+        for (uint256 id=1; id < count; id++){
+            // Check: How to get the token ID, or using address ? 
+            // tokenIDIndex = tokenOwnershipArray[id].tokenId;  
+             if (tokenID == id){
+                 delete tokenOwnershipArray[id];
+             }
+        }
      }
-     
-    function  removeTokenFromMapping(string memory tokenID) public {
-        
-         // We need to remove the token from the mapping. 
-         // Make an function that deletes thetoken from the mapping. 
-        // You can make this an internal function, which can then becalled within the burn function
+
+    function  removeTokenFromMapping(uint256 tokenID) internal {
+        // Check: How to delete from mapping with Token ID, or address? 
+        delete tokenOwnershipArray[tokenID];
     }
 }
